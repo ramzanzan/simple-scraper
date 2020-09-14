@@ -1,9 +1,9 @@
-package ramzanzan.hraper.api.dto;
+package ramzanzan.hraper.model;
 
 import lombok.Data;
 
 @Data
-public class ExcerptAttributeDescriptorDTO {
+public class ExcerptAttributeSpec {
     private String name;
     private String selector;
     private Integer limit;
