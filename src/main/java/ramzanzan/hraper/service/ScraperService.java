@@ -7,12 +7,18 @@ import ramzanzan.hraper.model.DataPointer;
 import ramzanzan.hraper.model.ExcerptDefinition;
 import ramzanzan.hraper.model.Request;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class ScraperService {
 
     private final CrudRepository<Request, UUID> repository;
+    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     public ScraperService(CrudRepository<Request, UUID> repository) {
         this.repository = repository;
@@ -22,14 +28,14 @@ public class ScraperService {
         return null;
     }
 
-    public Errors validateExcerptSpec(ExcerptDefinition spec){
+    public Errors validateExcerptDefinitions(Iterable<ExcerptDefinition> definitions){
         return null;
     }
 
-    public Request scrap(DataPointer pointer, ExcerptDefinition spec, Long packSize){
-        var req = new Request(pointer,spec,packSize);
+    public Request scrap(DataPointer pointer, List<ExcerptDefinition> definitions, int packSize, boolean withOrigin){
+        var req = new Request(pointer,definitions,packSize, withOrigin);
         req = repository.save(req);
-        //todo
+        executor.submit(new ScraperTask(req)); //todo err handling
         return req;
     }
 }

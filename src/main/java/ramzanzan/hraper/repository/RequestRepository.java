@@ -14,7 +14,6 @@ public class RequestRepository implements CrudRepository<Request, UUID>{
 
     @Override
     public <S extends Request> S save(S entity) {
-       if(entity.getId()==null) entity.setId(UUID.randomUUID());
        storage.put(entity.getId(),entity);
        return entity;
     }

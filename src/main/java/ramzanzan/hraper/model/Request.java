@@ -1,30 +1,45 @@
 package ramzanzan.hraper.model;
 
+import java.util.LinkedList;
 import java.util.List;
-import lombok.Data;
-import ramzanzan.hraper.api.dto.RequestDTO;
-import ramzanzan.hraper.api.dto.RequestStatusDTO;
 
-import java.util.Collections;
+import lombok.Data;
+
 import java.util.UUID;
 
 @Data
 public class Request {
-    private UUID id;
-    private Status status;
-    private Long itemsProcessed;
-    private Long packsReady;
-    private Long packSize;
-    private RequestDTO request;
 
-    private List<Excerpt> excerpts;
+    public static final String PAGE_PARAMETER = "{page_num}";
+    public static final String ORIGIN = "_origin";
 
-    public Long getItemsProcessed(){
-        return (long)excerpts.size();
+    private final UUID id = UUID.randomUUID();
+    private final boolean withOrigin;
+    private final int pageSize;
+    private final List<ExcerptDefinition> definitions;
+    private final DataPointer pointer;
+
+    private volatile Status status = Status.CREATED;
+    private List<Excerpts> excerpts = new LinkedList<>(); //todo sync
+    private volatile Exception exception;
+
+    public Request(DataPointer pointer, List<ExcerptDefinition> definitions, int packSize, boolean withOrigin){
+        this.pointer = pointer;
+        this.pageSize = packSize;
+        this.definitions = definitions;
+        this.withOrigin = withOrigin;
     }
 
-    public Long getPacksReady(){
-        return getItemsProcessed()/packSize + getItemsProcessed()%packSize==0 ? 0L : 1L;
+    public int getItemsProcessed(){
+        return excerpts.size();
+    }
+
+    public int getPacksReady(){
+        return getItemsProcessed()/ pageSize + (getItemsProcessed()% pageSize ==0 ? 0 : 1);
+    }
+
+    public boolean isForSingleItem(){
+        return !pointer.getUrl().contains(PAGE_PARAMETER);
     }
 
     @Override
@@ -33,6 +48,9 @@ public class Request {
     }
 
     public enum Status{
-        PROCESSING
+        CREATED,
+        PROCESSING,
+        COMPLETED,
+        INTERRUPTED
     }
 }

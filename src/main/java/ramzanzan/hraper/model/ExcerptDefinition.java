@@ -1,10 +1,26 @@
 package ramzanzan.hraper.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
-public class ExcerptAttributeSpec {
+public class ExcerptDefinition {
     private String name;
     private String selector;
-    private Integer limit;
+    private Type type;
+    private String attrName;
+    private Integer limit = Integer.MAX_VALUE;
+
+    @JsonIgnore
+    public boolean isSingular(){
+        return limit==1;
+    }
+
+    public enum Type{
+        TEXT,
+        OWN_TEXT,
+        HTML,
+        OWN_HTML,
+        ATTR
+    }
 }

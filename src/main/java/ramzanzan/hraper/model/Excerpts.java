@@ -2,13 +2,29 @@ package ramzanzan.hraper.model;
 
 import lombok.Data;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URI;
+import java.net.URL;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
-public class Excerpt {
-    private Map<String,List<String>> attributes = new HashMap<>();
+public class Excerpts {
+    private Map<String,List<String>> excerpts = new HashMap<>();
+    private String origin;
+
+    public void add(String name, String excerpt){
+        if (!excerpts.containsKey(name))
+            excerpts.put(name,new LinkedList<>());
+        excerpts.get(name).add(excerpt);
+    }
+
+    public void add(String name, String excerpt, boolean asSingleton){
+        if (asSingleton) {
+            excerpts.put(name, Collections.singletonList(excerpt));
+            return;
+        }
+        if (!excerpts.containsKey(name))
+            excerpts.put(name,new LinkedList<>());
+        excerpts.get(name).add(excerpt);
+    }
 }
