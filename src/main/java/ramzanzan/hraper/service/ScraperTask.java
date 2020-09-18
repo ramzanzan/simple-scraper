@@ -18,27 +18,21 @@ public class ScraperTask implements Runnable {
         this.request = request;
     }
 
-    protected Document getDocument(String url){
-        try {
-            //todo to props
-            return Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36")
-                    .timeout(30000)
-                    .get();
-        }catch (IOException e){
-            request.setException(e);
-            request.setStatus(Request.Status.INTERRUPTED);
-            throw new RuntimeException(e); //todo
-        }
+    protected Document getDocument(String url) throws IOException {
+        return Jsoup.connect(url)
+                .userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36")
+                .timeout(30000)
+                .get();
+        //todo to props
     }
 
-    private List<String> getItemURLs(String pageUrl){
+    private List<String> getItemURLs(String pageUrl) throws IOException {
         Document doc = getDocument(pageUrl);
         var elements = doc.select(request.getPointer().getItemUrlSelector());
         return elements.stream().map(e->e.absUrl("href")).filter(s->s.length()>0).collect(Collectors.toList());
     }
 
-    private Excerpts getExcerpts(String itemUrl){
+    private Excerpts getExcerpts(String itemUrl) throws IOException {
         Document doc = getDocument(itemUrl);
         var excerpts = new Excerpts();
         for(var def : request.getDefinitions()){
@@ -65,30 +59,36 @@ public class ScraperTask implements Runnable {
 
     @Override
     public void run() {
-        request.setStatus(Request.Status.PROCESSING);
-        if (request.isForSingleItem()){
-            request.getExcerpts().add(getExcerpts(request.getPointer().getUrl()));
-        }else {
-            var pointer = request.getPointer();
-            long remainingOffset = pointer.getOffset();
-            long remainingLimit = pointer.getLimit();
-            OUTER:
-            for(long i=pointer.getFrom(); i<=pointer.getTo(); i++){
-                var urls = getItemURLs(pointer.getUrl().replace(Request.PAGE_PARAMETER,String.valueOf(i)));
-                if(remainingOffset>0){
-                   if (remainingOffset >= urls.size()) {
-                       remainingOffset -= urls.size();
-                       continue;
-                   }else {
-                       urls = urls.subList((int)remainingOffset,urls.size());
-                       remainingOffset = 0;
-                   }
-                }
-                for(var url : urls){
-                    if(pointer.isLimited() && --remainingLimit<0) break OUTER;
-                    request.getExcerpts().add(getExcerpts(url));
+        try {
+            request.setStatus(Request.Status.PROCESSING);
+            if (request.isForSingleItem()) {
+                request.getExcerpts().add(getExcerpts(request.getPointer().getUrl()));
+            } else {
+                var pointer = request.getPointer();
+                long remainingOffset = pointer.getOffset();
+                long remainingLimit = pointer.getLimit();
+                OUTER:
+                for (long i = pointer.getFrom(); i <= pointer.getTo(); i++) {
+                    var urls = getItemURLs(pointer.getUrl().replace(Request.PAGE_PARAMETER, String.valueOf(i)));
+                    if (remainingOffset > 0) {
+                        if (remainingOffset >= urls.size()) {
+                            remainingOffset -= urls.size();
+                            continue;
+                        } else {
+                            urls = urls.subList((int) remainingOffset, urls.size());
+                            remainingOffset = 0;
+                        }
+                    }
+                    for (var url : urls) {
+                        if (pointer.isLimited() && --remainingLimit < 0) break OUTER;
+                        request.getExcerpts().add(getExcerpts(url));
+                    }
                 }
             }
+        }catch (Exception e){
+            request.setException(e);
+            request.setStatus(Request.Status.COMPLETED_WITH_ERRS);
+            throw new RuntimeException(e); //todo
         }
         request.setStatus(Request.Status.COMPLETED);
     }

@@ -10,8 +10,7 @@ import java.util.UUID;
 @Data
 public class Request {
 
-    public static final String PAGE_PARAMETER = "{page_num}";
-    public static final String ORIGIN = "_origin";
+    public static final String PAGE_PARAMETER = "{page}";
 
     private final UUID id = UUID.randomUUID();
     private final boolean withOrigin;
@@ -20,7 +19,7 @@ public class Request {
     private final DataPointer pointer;
 
     private volatile Status status = Status.CREATED;
-    private List<Excerpts> excerpts = new LinkedList<>(); //todo sync
+    private List<Excerpts> excerpts = new LinkedList<>(); //todo
     private volatile Exception exception;
 
     public Request(DataPointer pointer, List<ExcerptDefinition> definitions, int packSize, boolean withOrigin){
@@ -51,6 +50,6 @@ public class Request {
         CREATED,
         PROCESSING,
         COMPLETED,
-        INTERRUPTED
+        COMPLETED_WITH_ERRS
     }
 }

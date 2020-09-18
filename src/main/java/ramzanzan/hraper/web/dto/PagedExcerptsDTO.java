@@ -37,7 +37,7 @@ public class PagedExcerptsDTO extends CollectionModel<Excerpts> {
                 .slash(request.getId()).slash("excerpts?page="+page+"&size="+size).withSelfRel();
         var processed = request.getItemsProcessed();
         var isLast = processed <= to
-                && (request.getStatus() == Request.Status.COMPLETED || request.getStatus() == Request.Status.INTERRUPTED);
+                && (request.getStatus() == Request.Status.COMPLETED || request.getStatus() == Request.Status.COMPLETED_WITH_ERRS);
         var pageModel = new PagedExcerptsDTO(sublist,sublist.size(), isLast,
                 (int)Math.ceil(((double)processed)/size), processed, self);
         if(page>1)
