@@ -10,6 +10,6 @@ import java.util.List;
 public class RequestDTO {
     private DataPointer pointer;
     private List<ExcerptDefinition> excerptDefinitions;
-    private Integer packSize;
+    private Integer pageSize;
     private boolean withOrigin;
 }

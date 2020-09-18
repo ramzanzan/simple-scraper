@@ -29,7 +29,7 @@ public class ScraperController {
 //        var errs = service.validateExcerptDefinitions(requestDto.getExcerptDefinitions());
 //        service.validatePointer(requestDto.getPointer());
         var request = service.scrap(requestDto.getPointer(), requestDto.getExcerptDefinitions(),
-                requestDto.getPackSize(), requestDto.isWithOrigin());
+                requestDto.getPageSize(), requestDto.isWithOrigin());
         return new RequestStatusDTO(request);
     }
 
