@@ -10,8 +10,6 @@ import java.util.UUID;
 @Data
 public class Request {
 
-    public static final String PAGE_PARAMETER = "{page}";
-
     private final UUID id = UUID.randomUUID();
     private final boolean withOrigin;
     private final int pageSize;
@@ -35,10 +33,6 @@ public class Request {
 
     public int getPacksReady(){
         return getItemsProcessed()/ pageSize + (getItemsProcessed()% pageSize ==0 ? 0 : 1);
-    }
-
-    public boolean isForSingleItem(){
-        return !pointer.getUrl().contains(PAGE_PARAMETER);
     }
 
     @Override

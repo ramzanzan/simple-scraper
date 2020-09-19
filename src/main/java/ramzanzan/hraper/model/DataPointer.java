@@ -3,34 +3,45 @@ package ramzanzan.hraper.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.util.*;
+
 @Data
+
 public class DataPointer {
-    private String url;
-    private Long from;
-    private Long to;
-    private String itemUrlSelector;
-    private Long offset;
-    private Long limit;
 
-    public Long getLimit(){
-        return limit!=null ? limit : 0L;
-    }
+    public static final String PAGE_PARAMETER = "{page}";
 
-    public Long getFrom(){
-        return from!=null ? from : 0L;
-    }
-
-    public Long getTo(){
-        return to!=null ? to : 0L;
-    }
-
-    public Long getOffset(){
-        return offset!=null ? offset : 0L;
-    }
+    private String pageUrlTemplate = "";
+    private long from;
+    private long to;
+    private String itemUrlSelector = "";    //todo
+    private long offset = 0L;
+    private long limit = Long.MAX_VALUE;
 
     @JsonIgnore
     public boolean isLimited(){
-        return limit!=null && limit>0;
+        return true;
+    }
+
+//    @JsonIgnore
+//    public boolean isTrivial(){
+//        return url.contains(PAGE_PARAMETER);
+//    }
+
+    public Iterable<String> getURLs(){
+//        if(isTrivial()) return Collections.singleton(url);
+        return () -> new Iterator<>() {
+            long current = from;
+            @Override
+            public boolean hasNext() {
+                return current<=to;
+            }
+            @Override
+            public String next() {
+                if(current>to) throw new NoSuchElementException();
+                return pageUrlTemplate.replace(PAGE_PARAMETER,String.valueOf(current++));
+            }
+        };
     }
 
 }

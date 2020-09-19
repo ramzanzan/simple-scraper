@@ -25,7 +25,7 @@ public class ScraperTaskTests {
 
     Request getSoloItemRequest(){
         var dp1 = new DataPointer();
-        dp1.setUrl("src/test/resources/test_item.html");
+        dp1.setPageUrlTemplate("src/test/resources/test_item.html");
         var exd = new ExcerptDefinition();
         exd.setName("part");
         exd.setSelector("div.ingredients-list:nth-child(8) > div:nth-child(2) > p");

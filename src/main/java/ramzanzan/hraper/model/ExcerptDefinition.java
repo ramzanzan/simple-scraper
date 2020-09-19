@@ -3,6 +3,8 @@ package ramzanzan.hraper.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class ExcerptDefinition {
     private String name;

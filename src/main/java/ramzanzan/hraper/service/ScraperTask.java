@@ -61,25 +61,26 @@ public class ScraperTask implements Runnable {
     public void run() {
         try {
             request.setStatus(Request.Status.PROCESSING);
-            if (request.isForSingleItem()) {
-                request.getExcerpts().add(getExcerpts(request.getPointer().getUrl()));
-            } else {
-                var pointer = request.getPointer();
+            var pointer = request.getPointer();
+            if(false) return;
+//            if (pointer.isTrivial()) {
+//                request.getExcerpts().add(getExcerpts(request.getPointer().getPageUrlTemplate()));}
+             else {
                 long remainingOffset = pointer.getOffset();
                 long remainingLimit = pointer.getLimit();
                 OUTER:
-                for (long i = pointer.getFrom(); i <= pointer.getTo(); i++) {
-                    var urls = getItemURLs(pointer.getUrl().replace(Request.PAGE_PARAMETER, String.valueOf(i)));
+                for (var pageUrl : pointer.getURLs()) {
+                    var itemUrls = getItemURLs(pageUrl);
                     if (remainingOffset > 0) {
-                        if (remainingOffset >= urls.size()) {
-                            remainingOffset -= urls.size();
+                        if (remainingOffset >= itemUrls.size()) {
+                            remainingOffset -= itemUrls.size();
                             continue;
                         } else {
-                            urls = urls.subList((int) remainingOffset, urls.size());
+                            itemUrls = itemUrls.subList((int) remainingOffset, itemUrls.size());
                             remainingOffset = 0;
                         }
                     }
-                    for (var url : urls) {
+                    for (var url : itemUrls) {
                         if (pointer.isLimited() && --remainingLimit < 0) break OUTER;
                         request.getExcerpts().add(getExcerpts(url));
                     }
