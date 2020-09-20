@@ -5,9 +5,6 @@
 todo https://docs.spring.io/spring-framework/docs/5.2.9.RELEASE/javadoc-api/org/springframework/context/support/ResourceBundleMessageSource.html
 
 todo
-2.2) default values
-2.3) err msgs
-3) validation
 4) openapi
 5) tests
 6) security
