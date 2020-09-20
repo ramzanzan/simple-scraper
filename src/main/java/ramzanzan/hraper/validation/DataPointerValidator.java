@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 @Component
-@Validated
 public class DataPointerValidator implements Validator {
 
     @Autowired private CssSelectorValidator selectorValidator;
@@ -36,7 +35,7 @@ public class DataPointerValidator implements Validator {
                 if(!(url.getProtocol().equals("http") || url.getProtocol().equals("https")))
                     errors.rejectValue("pageUrlTemplate","","Protocol must be http or https");
             } catch (MalformedURLException e) {
-                errors.rejectValue("url","", "pageUrlTemplate isn't valid URL after {page} substitution :: "+e.getMessage());
+                errors.rejectValue("pageUrlTemplate","", "pageUrlTemplate isn't valid URL after {page} substitution :: "+e.getMessage());
             }
         }
 

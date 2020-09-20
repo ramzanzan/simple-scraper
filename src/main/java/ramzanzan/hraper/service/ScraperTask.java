@@ -23,9 +23,9 @@ public class ScraperTask implements Runnable {
                 .userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36")
                 .timeout(30000)
                 .get();
-        //todo to props
     }
 
+    //todo generalize
     private List<String> getItemURLs(String pageUrl) throws IOException {
         Document doc = getDocument(pageUrl);
         var elements = doc.select(request.getPointer().getItemUrlSelector());
@@ -62,28 +62,23 @@ public class ScraperTask implements Runnable {
         try {
             request.setStatus(Request.Status.PROCESSING);
             var pointer = request.getPointer();
-            if(false) return;
-//            if (pointer.isTrivial()) {
-//                request.getExcerpts().add(getExcerpts(request.getPointer().getPageUrlTemplate()));}
-             else {
-                long remainingOffset = pointer.getOffset();
-                long remainingLimit = pointer.getLimit();
-                OUTER:
-                for (var pageUrl : pointer.getURLs()) {
-                    var itemUrls = getItemURLs(pageUrl);
-                    if (remainingOffset > 0) {
-                        if (remainingOffset >= itemUrls.size()) {
-                            remainingOffset -= itemUrls.size();
-                            continue;
-                        } else {
-                            itemUrls = itemUrls.subList((int) remainingOffset, itemUrls.size());
-                            remainingOffset = 0;
-                        }
+            long remainingOffset = pointer.getOffset();
+            long remainingLimit = pointer.getLimit();
+            OUTER:
+            for (var pageUrl : pointer.getURLs()) {
+                var itemUrls = getItemURLs(pageUrl);
+                if (remainingOffset > 0) {
+                    if (remainingOffset >= itemUrls.size()) {
+                        remainingOffset -= itemUrls.size();
+                        continue;
+                    } else {
+                        itemUrls = itemUrls.subList((int) remainingOffset, itemUrls.size());
+                        remainingOffset = 0;
                     }
-                    for (var url : itemUrls) {
-                        if (pointer.isLimited() && --remainingLimit < 0) break OUTER;
-                        request.getExcerpts().add(getExcerpts(url));
-                    }
+                }
+                for (var url : itemUrls) {
+                    if (pointer.isLimited() && --remainingLimit < 0) break OUTER;
+                    request.getExcerpts().add(getExcerpts(url));
                 }
             }
         }catch (Exception e){

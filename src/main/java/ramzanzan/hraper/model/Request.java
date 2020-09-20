@@ -32,7 +32,7 @@ public class Request {
     }
 
     public int getPacksReady(){
-        return getItemsProcessed()/ pageSize + (getItemsProcessed()% pageSize ==0 ? 0 : 1);
+        return getItemsProcessed()/pageSize + (getItemsProcessed()%pageSize ==0 ? 0 : 1);
     }
 
     @Override

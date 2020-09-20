@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import ramzanzan.hraper.model.DataPointer;
 import ramzanzan.hraper.web.dto.RequestDTO;
 
 @Component
@@ -31,7 +30,7 @@ public class RequestDTOValidator implements Validator {
         var def = req.getExcerptDefinitions();
         if(def.isEmpty()) errors.rejectValue("excerptDefinitions","", "Definitions can't be empty");
         for(int i=0;i<def.size();i++){
-            errors.pushNestedPath("excerptDefinitions["+i+"]"); //todo
+            errors.pushNestedPath("excerptDefinitions["+i+"]");
             ValidationUtils.invokeValidator(excDefValidator,def.get(i),errors);
             errors.popNestedPath();
         }

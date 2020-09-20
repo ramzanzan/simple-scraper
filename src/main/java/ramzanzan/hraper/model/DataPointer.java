@@ -23,13 +23,7 @@ public class DataPointer {
         return true;
     }
 
-//    @JsonIgnore
-//    public boolean isTrivial(){
-//        return url.contains(PAGE_PARAMETER);
-//    }
-
     public Iterable<String> getURLs(){
-//        if(isTrivial()) return Collections.singleton(url);
         return () -> new Iterator<>() {
             long current = from;
             @Override

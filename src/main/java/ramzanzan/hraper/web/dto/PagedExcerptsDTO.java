@@ -28,14 +28,15 @@ public class PagedExcerptsDTO extends CollectionModel<Excerpts> {
     }
 
     public static PagedExcerptsDTO of(Request request, int page, int size){
-        Assert.state(page>0,"Page must be > 0");
-        Assert.state(size>0,"Size must be > 0");
-        var from = (page-1) * size; //todo test page existence
-        var to = Math.min(request.getItemsProcessed(), from + size);
+        Assert.state(page>0,"page must be > 0");
+        Assert.state(size>0,"size must be > 0");
+        var processed = request.getItemsProcessed();
+        var from = (page-1) * size;
+        Assert.state(processed<from+1,"such page doesn't exist");
+        var to = Math.min(processed, from + size);
         var sublist = request.getExcerpts().subList(from, to);
         var self = WebMvcLinkBuilder.linkTo(ScraperController.class)
                 .slash(request.getId()).slash("excerpts?page="+page+"&size="+size).withSelfRel();
-        var processed = request.getItemsProcessed();
         var isLast = processed <= to
                 && (request.getStatus() == Request.Status.COMPLETED || request.getStatus() == Request.Status.COMPLETED_WITH_ERRS);
         var pageModel = new PagedExcerptsDTO(sublist,sublist.size(), isLast,
