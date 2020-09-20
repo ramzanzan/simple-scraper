@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import lombok.Data;
+import org.zalando.problem.Problem;
 
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class Request {
 
     private volatile Status status = Status.CREATED;
     private List<Excerpts> excerpts = new LinkedList<>(); //todo
-    private volatile Exception exception;
+    private volatile String errorDetails;
 
     public Request(DataPointer pointer, List<ExcerptDefinition> definitions, int packSize, boolean withOrigin){
         this.pointer = pointer;
@@ -31,7 +32,7 @@ public class Request {
         return excerpts.size();
     }
 
-    public int getPacksReady(){
+    public int getPagesReady(){
         return getItemsProcessed()/pageSize + (getItemsProcessed()%pageSize ==0 ? 0 : 1);
     }
 

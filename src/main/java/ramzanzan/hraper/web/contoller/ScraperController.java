@@ -63,7 +63,7 @@ public class ScraperController {
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"there isn't request with such id :: "+id));
         if(size==null) size= request.getPageSize();
         var processed = request.getItemsProcessed();
-        if ( processed < (page-1)*size )
+        if (processed==0 || processed<(page-1)*size)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"page unavailable (now or in future too)");
         return PagedExcerptsDTO.of(request,page,size);
     }

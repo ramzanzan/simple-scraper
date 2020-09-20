@@ -82,9 +82,9 @@ public class ScraperTask implements Runnable {
                 }
             }
         }catch (Exception e){
-            request.setException(e);
+            request.setErrorDetails(e.toString());
             request.setStatus(Request.Status.COMPLETED_WITH_ERRS);
-            throw new RuntimeException(e); //todo
+            return;
         }
         request.setStatus(Request.Status.COMPLETED);
     }

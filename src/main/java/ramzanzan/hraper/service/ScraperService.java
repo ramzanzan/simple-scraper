@@ -35,7 +35,7 @@ public class ScraperService {
     public Request scrap(DataPointer pointer, List<ExcerptDefinition> definitions, int packSize, boolean withOrigin){
         var req = new Request(pointer,definitions,packSize, withOrigin);
         req = repository.save(req);
-        executor.submit(new ScraperTask(req)); //todo err handling
+        executor.submit(new ScraperTask(req));
         return req;
     }
 }
