@@ -25,7 +25,8 @@ public class ExcerptDefinitionValidator implements Validator {
         ValidationUtils.invokeValidator(selectorValidator,ed.getSelector(),errors);
         errors.popNestedPath();
         if(ed.getLimit()<1) errors.rejectValue("limit","","limit must be > 1");
-        if(ed.getType()== ExcerptDefinition.Type.ATTR){
+        ValidationUtils.rejectIfEmpty(errors,"type","","malformed type");
+        if(ed.getType() == ExcerptDefinition.Type.ATTR){
             ValidationUtils.rejectIfEmpty(errors,"attrName","","attrName can't be empty when Type = ATTR");
         }
     }

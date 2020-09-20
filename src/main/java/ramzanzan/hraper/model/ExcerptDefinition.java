@@ -1,5 +1,6 @@
 package ramzanzan.hraper.model;
 
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 

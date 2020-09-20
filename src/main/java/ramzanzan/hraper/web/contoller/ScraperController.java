@@ -8,6 +8,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ramzanzan.hraper.validation.RequestDTOValidator;
 import ramzanzan.hraper.web.dto.RequestDTO;
@@ -31,15 +32,18 @@ public class ScraperController {
     @Autowired private ScraperService service;
     @Autowired private RequestDTOValidator requestDTOValidator;
 
-    //todo validation
+    @InitBinder
+    public void configBinder(WebDataBinder binder){
+        binder.addValidators(requestDTOValidator);
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public RequestStatusDTO postRequest(@RequestBody @Valid RequestDTO requestDto, Errors errors) throws BindException{
-        requestDTOValidator.validate(requestDto, errors);
-        if(errors.hasErrors()){
-            var be = new BindException(requestDto, "requestDTO");
-            be.addAllErrors(errors);
-            throw be;
-        }
+    public RequestStatusDTO postRequest(@RequestBody @Validated RequestDTO requestDto) throws BindException{
+//        if(errors.hasErrors()){
+//            var be = new BindException(requestDto, "requestDTO");
+//            be.addAllErrors(errors);
+//            throw be;
+//        }
 
 //        var errs = service.validateExcerptDefinitions(requestDto.getExcerptDefinitions());
 //        service.validatePointer(requestDto.getPointer());
